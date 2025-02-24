@@ -1,0 +1,42 @@
+{
+    "title": "Interactive Map",
+    "description": "Interactive map with customizable markers and rich content",
+    "machineName": "H5P.InteractiveMap",
+    "majorVersion": 1,
+    "minorVersion": 0,
+    "patchVersion": 0,
+    "runnable": 1,
+    "author": "Matheus Mathias",
+    "license": "MIT",
+    "coreApi": {
+      "majorVersion": 1,
+      "minorVersion": 24
+    },
+    "preloadedDependencies": [
+      {
+        "machineName": "FontAwesome",
+        "majorVersion": 4,
+        "minorVersion": 5
+      }
+    ],
+    "preloadedJs": [
+      {
+        "path": "leaflet/leaflet.js"
+      },
+      {
+        "path": "scripts/interactive-map.js"
+      }
+    ],
+    "preloadedCss": [
+      {
+        "path": "leaflet/leaflet.css"
+      },
+      {
+        "path": "styles/interactive-map.css"
+      }
+    ],
+    "metadataSettings": {
+      "disable": 0,
+      "disableExtraTitleField": 0
+    }
+  }

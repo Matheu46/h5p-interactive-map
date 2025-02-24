@@ -1,0 +1,9 @@
+/* Container do mapa */
+.h5p-interactive-map .h5p-map-container  {
+  flex: 1;
+  height: 500px;
+  min-height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}

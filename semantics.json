@@ -1,0 +1,40 @@
+[
+  {
+    "name": "mapPoints",
+    "type": "list",
+    "label": "Pontos no mapa",
+    "entity": "Localização",
+    "field": {
+      "name": "point",
+      "type": "group",
+      "label": "Ponto no Mapa",
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "label": "Título do Ponto",
+          "description": "Nome do local"
+        },
+        {
+          "name": "latitude",
+          "type": "text",
+          "label": "Latitude",
+          "description": "Coordenada Y"
+        },
+        {
+          "name": "longitude",
+          "type": "text",
+          "label": "Longitude",
+          "description": "Coordenada X"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "label": "Descrição",
+          "description": "Texto que aparecerá ao clicar no ponto",
+          "widget": "textarea"
+        }
+      ]      
+    }
+  }
+]
