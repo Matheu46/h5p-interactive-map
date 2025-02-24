@@ -1,5 +1,23 @@
 [
   {
+    "name": "defaultLatitude",
+    "type": "text",
+    "label": "Latitude inicial",
+    "description": "Coordenada Y"
+  },
+  {
+    "name": "defaultLongitude",
+    "type": "text",
+    "label": "Longitude inicial",
+    "description": "Coordenada X"
+  },
+  {
+    "name": "defaultZoom",
+    "type": "number",
+    "label": "Zoom inicial",
+    "description": "Nível de zoom do mapa"
+  },
+  {
     "name": "mapPoints",
     "type": "list",
     "label": "Pontos no mapa",

@@ -15,9 +15,9 @@ H5P.InteractiveMap = (function($) {
     console.log("Content ID:", this.contentId);
 
     // Pegar configurações iniciais do mapa
-    var centerLat = -5.7945;
-    var centerLng = -36.6656;
-    var zoomLevel = 8;
+    var centerLat = this.params.defaultLatitude;
+    var centerLng = this.params.defaultLongitude;
+    var zoomLevel = this.params.defaultZoom;
 
     // Inicializar Leaflet.js
     var map = L.map(mapId).setView([centerLat, centerLng], zoomLevel);
