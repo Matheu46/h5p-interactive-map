@@ -50,7 +50,24 @@
           "type": "text",
           "label": "Descrição",
           "description": "Texto que aparecerá ao clicar no ponto",
-          "widget": "textarea"
+          "widget": "html",
+          "tags": [
+            "strong",
+            "em",
+            "sub",
+            "sup",
+            "u",
+            "ul",
+            "ol",
+            "li",
+            "a"
+          ],
+          "font": {
+            "size": true,
+            "family": true,
+            "color": true,
+            "background": true
+          }
         }
       ]      
     }
