@@ -18,6 +18,68 @@
     "description": "Nível de zoom do mapa"
   },
   {
+    "name": "iconSettings",
+    "type": "group",
+    "label": "Configurações do Ícone Personalizado",
+    "description": "Configurações do Ícone Personalizado",
+    "optional": true,
+    "fields": [
+      {
+        "name": "dummySummary",
+        "type": "text",
+        "label": "Nome do ícone",
+        "default": "",
+        "optional": true
+      },
+      {
+        "name": "icon",
+        "type": "file",
+        "label": "Ícone do ponto",
+        "description": "Envie um ícone personalizado para os pontos do mapa",
+        "optional": true,
+        "mimetypes": ["image/png", "image/jpeg", "image/svg+xml"],
+        "maxSize": 512000
+      },
+      {
+        "name": "iconSize",
+        "type": "text",
+        "label": "Tamanho do ícone",
+        "description": "Defina o tamanho do ícone no formato: largura,altura (ex: 25,41)",
+        "default": "25,41"
+      },
+      {
+        "name": "iconAnchor",
+        "type": "text",
+        "label": "Ponto de ancoragem do ícone",
+        "description": "Defina o ponto de ancoragem do ícone (x,y) (ex: 12,41)",
+        "default": "12,41"
+      },
+      {
+        "name": "popupAnchor",
+        "type": "text",
+        "label": "Ponto de ancoragem do popup",
+        "description": "Defina o ponto de ancoragem do popup (x,y) (ex: 1,-34)",
+        "default": "1,-34"
+      },
+      {
+        "name": "shadowUrl",
+        "type": "file",
+        "label": "Ícone da sombra",
+        "description": "Envie um ícone para a sombra do marcador",
+        "optional": true,
+        "mimetypes": ["image/png", "image/jpeg", "image/svg+xml"],
+        "maxSize": 512000
+      },
+      {
+        "name": "shadowSize",
+        "type": "text",
+        "label": "Tamanho da sombra",
+        "description": "Defina o tamanho da sombra no formato: largura,altura (ex: 41,41)",
+        "default": "41,41"
+      }
+    ]
+  },
+  {
     "name": "mapPoints",
     "type": "list",
     "label": "Pontos no mapa",
