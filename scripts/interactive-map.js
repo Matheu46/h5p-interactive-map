@@ -23,9 +23,22 @@ H5P.InteractiveMap = (function($) {
 
     // Criar container do mapa
     $container.addClass("h5p-interactive-map");
+
+    // Cria o contêiner do mapa
     var mapId = "h5p-map-" + this.contentId;
     $container.append('<div id="' + mapId + '" class="h5p-map-container"></div>');
-    console.log("Content ID:", this.contentId);
+
+    // Criar o painel lateral (busca e listagem)
+    var sidebarHTML = `
+      <aside class="polos-sidebar">
+          <div id="search-container">
+              <input type="text" id="search-input" placeholder="Digite o nome do polo">
+              <button id="clear-search" style="display: none;">&times;</button>
+          </div>
+          <div id="polos-list-items"></div>
+      </aside>
+    `;
+    $container.append(sidebarHTML);
 
     // Pegar configurações iniciais do mapa
     var centerLat = this.params.defaultLatitude;
@@ -79,6 +92,10 @@ H5P.InteractiveMap = (function($) {
         }
       });
     }
+
+    // Lista de polos
+    const listItems = document.getElementById('polos-list-items');
+
   };
 
   return MapManager;
