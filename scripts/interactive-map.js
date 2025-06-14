@@ -38,6 +38,7 @@ H5P.InteractiveMap = (function ($) {
       </aside>
     `;
     $container.append(sidebar);
+    // <div style="display: none; class="no-results-message">Nenhum campi encontrado.</div>
 
     // Cache de seletores
     this.$list = document.getElementById('polos-list-items');
@@ -87,6 +88,7 @@ H5P.InteractiveMap = (function ($) {
     });
   };
 
+
   /** 5. Preenche a lista lateral e conecta eventos */
   MapManager.prototype.buildSidebar = function () {
     const zoomOnClick = this.params.clickZoomLevel || 14;
@@ -119,6 +121,39 @@ H5P.InteractiveMap = (function ($) {
       this.sidebarItems.push(item); // <- guardar para manipulação
       this.$list.appendChild(item);
     });
+
+    const noResults = document.createElement('div');
+    noResults.className = 'no-results-message';
+    noResults.textContent = 'Nenhum polo encontrado.';
+    noResults.style.display = 'none';
+
+    this.$list.parentNode.appendChild(noResults);
+    this.noResults = noResults; // salvar referência
+
+    const searchInput = document.getElementById('search-input');
+    const clearButton = document.getElementById('clear-search');
+
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      let visibleCount = 0;
+    
+      this.sidebarItems.forEach(item => {
+        const matches = item.textContent.toLowerCase().includes(searchTerm);
+        item.style.display = matches ? 'block' : 'none';
+        if (matches) visibleCount++;
+      });
+    
+      clearButton.style.display = searchTerm ? 'inline-block' : 'none';
+      this.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+
+    clearButton.addEventListener('click', () => {
+      searchInput.value = '';
+      clearButton.style.display = 'none';
+      this.sidebarItems.forEach(item => (item.style.display = 'block'));
+      this.noResults.style.display = 'none';
+    });
+
   };
 
   /** 6. Entry point chamado pelo H5P para inserir o conteúdo */
