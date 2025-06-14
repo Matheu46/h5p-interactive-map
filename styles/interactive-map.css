@@ -6,7 +6,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
-  /* position: relative; */
+  position: relative;
 }
 
 .polos-sidebar {
@@ -20,6 +20,7 @@
   overflow-y: auto;
   z-index: 1000;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
+  transition: width 0.3s, padding 0.3s;
 }
 
 /* Container da busca */
@@ -86,7 +87,7 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  z-index: 1001;
+  z-index: 400;
   background-color: #0288d1;
   color: white;
   border: none;
@@ -109,7 +110,29 @@ body, html {
   font-family: sans-serif;
 }
 
-.h5p-map-container {
-  position: relative;
-  height: 100vh;
+/* Botão fixo à esquerda da sidebar */
+.toggle-sidebar-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 275px; /* ajusta conforme largura da sidebar */
+  z-index: 1000;
+  padding: 0.4rem 0.6rem;
+  background: #0277bd;
+  border: 1px solid #ccc;
+  color: #FFF;
+  cursor: pointer;
+  transition: left 0.3s;
+}
+
+/* Sidebar encolhida */
+.polos-sidebar.collapsed {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Reposiciona o botão quando a sidebar está encolhida */
+.polos-sidebar.collapsed + .toggle-sidebar-button {
+  left: 10px;
 }

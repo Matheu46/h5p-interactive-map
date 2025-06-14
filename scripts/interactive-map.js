@@ -36,6 +36,7 @@ H5P.InteractiveMap = (function ($) {
         </div>
         <div id="polos-list-items"></div>
       </aside>
+      <button id="toggle-sidebar" class="toggle-sidebar-button">«</button>
       <button id="reset-view" class="reset-view-button">Ver todos os campi</button>
     `;
     $container.append(sidebar);
@@ -171,6 +172,15 @@ H5P.InteractiveMap = (function ($) {
         this.params.defaultZoom,
         { animate: true, duration: 1.2 }
       );
+    });
+
+    const toggleSidebar = document.getElementById('toggle-sidebar');
+    toggleSidebar.addEventListener('click', () => {
+      const sidebar = document.querySelector('.polos-sidebar');
+      sidebar.classList.toggle('collapsed');
+    
+      const toggleBtn = document.getElementById('toggle-sidebar');
+      toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '»' : '«';
     });
 
   };
