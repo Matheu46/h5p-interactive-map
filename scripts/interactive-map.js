@@ -36,6 +36,7 @@ H5P.InteractiveMap = (function ($) {
         </div>
         <div id="polos-list-items"></div>
       </aside>
+      <button id="reset-view" class="reset-view-button">Ver todos os campi</button>
     `;
     $container.append(sidebar);
     // <div style="display: none; class="no-results-message">Nenhum campi encontrado.</div>
@@ -152,6 +153,16 @@ H5P.InteractiveMap = (function ($) {
       clearButton.style.display = 'none';
       this.sidebarItems.forEach(item => (item.style.display = 'block'));
       this.noResults.style.display = 'none';
+    });
+
+    // Retornar ao zoom padrão
+    const resetButton = document.getElementById('reset-view');
+    resetButton.addEventListener('click', () => {
+      this.map.flyTo(
+        [this.params.defaultLatitude, this.params.defaultLongitude],
+        this.params.defaultZoom,
+        { animate: true, duration: 1.2 }
+      );
     });
 
   };
