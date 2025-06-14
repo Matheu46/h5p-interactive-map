@@ -48,7 +48,15 @@ H5P.InteractiveMap = (function ($) {
   /** 2. Inicializa o mapa Leaflet com camada OSM */
   MapManager.prototype.initMap = function () {
     const { defaultLatitude: lat, defaultLongitude: lng } = this.params;
-    this.map = L.map(this.mapId).setView([lat, lng], this.zoomLevel);
+
+    this.map = L.map(this.mapId, {
+      zoomControl: false
+    }).setView([lat, lng], this.zoomLevel);
+
+    L.control.zoom({
+      position: 'bottomright'
+    }).addTo(this.map);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
