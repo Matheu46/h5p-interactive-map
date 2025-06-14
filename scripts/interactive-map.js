@@ -90,19 +90,33 @@ H5P.InteractiveMap = (function ($) {
   /** 5. Preenche a lista lateral e conecta eventos */
   MapManager.prototype.buildSidebar = function () {
     const zoomOnClick = this.params.clickZoomLevel || 14;
+    this.sidebarItems = [];
 
     this.markers.forEach(({ marker, point }) => {
       const item = document.createElement('div');
       item.className = 'polo-item';
       item.textContent = point.title;
 
+      // Evento de clique no item da lista
       item.addEventListener('click', () => {
+        this.sidebarItems.forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+
         this.map.flyTo([point.latitude, point.longitude], zoomOnClick, {
-          animate: true, duration: 1.2
+          animate: true, 
+          duration: 1.2
         });
         marker.openPopup();
       });
 
+      // Guardar referência cruzada
+      marker._linkedListItem = item;
+
+      marker.on('popupclose', () => {
+        item.classList.remove('active');
+      });
+
+      this.sidebarItems.push(item); // <- guardar para manipulação
       this.$list.appendChild(item);
     });
   };
