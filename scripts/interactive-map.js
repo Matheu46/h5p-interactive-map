@@ -1,102 +1,120 @@
-H5P.InteractiveMap = (function($) {
+H5P.InteractiveMap = (function ($) {
+
   function MapManager(params, contentId) {
-    var self = this;
     this.params = params;
     this.contentId = contentId;
-  };
+    this.markers = [];
+    this.map = null;
+    this.zoomLevel = params.defaultZoom;
+  }
 
-  // Função para converter string "num1,num2" em array [num1, num2]
-  function parseCoordinate(value, defaultValue) {
+  /** Utilitário para converter "num1,num2" em [num1, num2] */
+  MapManager.parseCoordinate = function (value, defaultValue) {
     if (value) {
-      var parts = value.split(',').map(function(item) {
-        return parseFloat(item.trim());
-      });
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      const parts = value.split(',').map(s => parseFloat(s.trim()));
+      if (parts.length === 2 && parts.every(n => !isNaN(n))) {
         return parts;
       }
     }
     return defaultValue;
-  }
+  };
 
-  MapManager.prototype.attach = function ($container) {
-    var self = this;
+  /** 1. Prepara o container do mapa e da sidebar */
+  MapManager.prototype.setupContainer = function ($container) {
+    $container.addClass('h5p-interactive-map');
 
-    // Criar container do mapa
-    $container.addClass("h5p-interactive-map");
+    // Mapa
+    this.mapId = 'h5p-map-' + this.contentId;
+    $container.append(`<div id="${this.mapId}" class="h5p-map-container"></div>`);
 
-    // Cria o contêiner do mapa
-    var mapId = "h5p-map-" + this.contentId;
-    $container.append('<div id="' + mapId + '" class="h5p-map-container"></div>');
-
-    // Criar o painel lateral (busca e listagem)
-    var sidebarHTML = `
+    // Sidebar
+    const sidebar = `
       <aside class="polos-sidebar">
-          <div id="search-container">
-              <input type="text" id="search-input" placeholder="Digite o nome do polo">
-              <button id="clear-search" style="display: none;">&times;</button>
-          </div>
-          <div id="polos-list-items"></div>
+        <div id="search-container">
+          <input type="text" id="search-input" placeholder="Digite o nome do polo">
+          <button id="clear-search" style="display:none">&times;</button>
+        </div>
+        <div id="polos-list-items"></div>
       </aside>
     `;
-    $container.append(sidebarHTML);
+    $container.append(sidebar);
 
-    // Pegar configurações iniciais do mapa
-    var centerLat = this.params.defaultLatitude;
-    var centerLng = this.params.defaultLongitude;
-    var zoomLevel = this.params.defaultZoom;
+    // Cache de seletores
+    this.$list = document.getElementById('polos-list-items');
+  };
 
-    // Inicializar Leaflet.js
-    var map = L.map(mapId).setView([centerLat, centerLng], zoomLevel);
+  /** 2. Inicializa o mapa Leaflet com camada OSM */
+  MapManager.prototype.initMap = function () {
+    const { defaultLatitude: lat, defaultLongitude: lng } = this.params;
+    this.map = L.map(this.mapId).setView([lat, lng], this.zoomLevel);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(this.map);
+  };
 
-    // Adicionar camada de mapa (OpenStreetMap)
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+  /** 3. Construir opções de ícone customizado, se houver */
+  MapManager.prototype.getMarkerOptions = function () {
+    const opts = {};
+    const cfg = this.params.iconSettings;
+    if (cfg && cfg.icon) {
+      const path = H5P.getPath;
+      const base = cfg.icon.path;
+      const iconUrl   = path(base, this.contentId);
+      const shadowUrl = cfg.shadowUrl ? path(cfg.shadowUrl.path, this.contentId) : null;
 
-    let markerOptions = {};
-
-    const iconSettings = this.params.iconSettings;
-    if (iconSettings.icon) {
-      // Cria as url's
-      let iconUrl = H5P.getPath(iconSettings.icon.path, self.contentId);
-      let shadowUrl = iconSettings.shadowUrl ? H5P.getPath(iconSettings.shadowUrl.path, self.contentId) : null;
-      
-      // Configurações padrão (se não forem informadas)
-      let defaultIconSize = [25, 41];
-      let defaultIconAnchor = [12, 41];
-      let defaultPopupAnchor = [1, -34];
-      let defaultShadowSize = [41, 41];
-  
-      // Se houver configurações personalizadas, faça o parse dos valores
-      let iconSize = parseCoordinate(iconSettings.iconSize, defaultIconSize);
-      let iconAnchor = parseCoordinate(iconSettings.iconAnchor, defaultIconAnchor);
-      let popupAnchor = parseCoordinate(iconSettings.popupAnchor, defaultPopupAnchor);
-      let shadowSize = parseCoordinate(iconSettings.shadowSize, defaultShadowSize);
-  
-      markerOptions.icon = L.icon({
-        iconUrl: iconUrl,
-        iconSize: iconSize,
-        iconAnchor: iconAnchor,
-        popupAnchor: popupAnchor,
-        shadowUrl: shadowUrl,
-        shadowSize: shadowSize
+      opts.icon = L.icon({
+        iconUrl,
+        shadowUrl,
+        iconSize:   MapManager.parseCoordinate(cfg.iconSize,   [25, 41]),
+        iconAnchor: MapManager.parseCoordinate(cfg.iconAnchor, [12, 41]),
+        popupAnchor:MapManager.parseCoordinate(cfg.popupAnchor,[1, -34]),
+        shadowSize: MapManager.parseCoordinate(cfg.shadowSize, [41, 41])
       });
     }
+    return opts;
+  };
 
-    // Adicionar os pontos ao mapa
-    if (this.params.mapPoints && this.params.mapPoints.length > 0) {
-      this.params.mapPoints.forEach(function (point) {
-        if (point.latitude && point.longitude) {
-          var marker = L.marker([point.latitude, point.longitude], markerOptions).addTo(map);
-          marker.bindPopup("<b>" + point.title + "</b><br>" + point.description);
-        }
+  /** 4. Adiciona marcadores no mapa e armazena referências */
+  MapManager.prototype.addMarkers = function () {
+    const options = this.getMarkerOptions();
+    (this.params.mapPoints || []).forEach(point => {
+      const { latitude: lat, longitude: lng, title, description } = point;
+      if (lat && lng) {
+        const m = L.marker([lat, lng], options).addTo(this.map)
+                   .bindPopup(`<b>${title}</b><br>${description}`);
+        this.markers.push({ marker: m, point });
+      }
+    });
+  };
+
+  /** 5. Preenche a lista lateral e conecta eventos */
+  MapManager.prototype.buildSidebar = function () {
+    const zoomOnClick = this.params.clickZoomLevel || 14;
+
+    this.markers.forEach(({ marker, point }) => {
+      const item = document.createElement('div');
+      item.className = 'polo-item';
+      item.textContent = point.title;
+
+      item.addEventListener('click', () => {
+        this.map.flyTo([point.latitude, point.longitude], zoomOnClick, {
+          animate: true, duration: 1.2
+        });
+        marker.openPopup();
       });
-    }
 
-    // Lista de polos
-    const listItems = document.getElementById('polos-list-items');
+      this.$list.appendChild(item);
+    });
+  };
 
+  /** 6. Entry point chamado pelo H5P para inserir o conteúdo */
+  MapManager.prototype.attach = function ($container) {
+    this.setupContainer($container);
+    this.initMap();
+    this.addMarkers();
+    this.buildSidebar();
   };
 
   return MapManager;
+
 })(H5P.jQuery);
