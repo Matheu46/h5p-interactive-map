@@ -114,6 +114,16 @@ H5P.InteractiveMap = (function ($) {
         this.sidebarItems.forEach(el => el.classList.remove('active'));
         item.classList.add('active');
 
+        // SE FOR MOBILE, recolhe a sidebar
+        if (window.innerWidth <= 768) {
+          const sidebar = document.querySelector('.polos-sidebar');
+          const toggleBtn = document.getElementById('toggle-sidebar');
+          if (sidebar && toggleBtn && !sidebar.classList.contains('collapsed')) {
+            sidebar.classList.add('collapsed');
+            toggleBtn.textContent = '»';
+          }
+        }
+
         this.map.flyTo([point.latitude, point.longitude], zoomOnClick, {
           animate: true, 
           duration: 1.2
