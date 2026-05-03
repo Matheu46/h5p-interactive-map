@@ -6,6 +6,7 @@ H5P.InteractiveMap = (function ($) {
     this.markers = [];
     this.map = null;
     this.mapBounds = null;
+    this.currentRunnable = null;
   }
 
   /** Utilitário para converter "num1,num2" em [num1, num2] */
@@ -21,6 +22,9 @@ H5P.InteractiveMap = (function ($) {
 
   /** 1. Prepara o container do mapa e da sidebar */
   MapManager.prototype.setupContainer = function ($container) {
+    this.$container = $container;
+    this.container = $container.get(0);
+
     $container.addClass('h5p-interactive-map');
 
     // Mapa
@@ -40,10 +44,23 @@ H5P.InteractiveMap = (function ($) {
       <button id="reset-view" class="reset-view-button">Ver todos os campi</button>
     `;
     $container.append(sidebar);
-    // <div style="display: none; class="no-results-message">Nenhum campi encontrado.</div>
 
-    // Cache de seletores
-    this.$list = document.getElementById('polos-list-items');
+    const modal = `
+      <div class="interactive-map-modal" aria-hidden="true">
+        <div class="interactive-map-modal__backdrop"></div>
+        <div class="interactive-map-modal__dialog" role="dialog" aria-modal="true" aria-label="Conteúdo interativo do mapa">
+          <button type="button" class="interactive-map-modal__close" aria-label="Fechar">×</button>
+          <div class="interactive-map-modal__content"></div>
+        </div>
+      </div>
+    `;
+    $container.append(modal);
+
+    this.$list = this.container.querySelector('#polos-list-items');
+    this.$modal = $container.find('.interactive-map-modal');
+    this.$modalContent = $container.find('.interactive-map-modal__content');
+    this.$modalClose = $container.find('.interactive-map-modal__close');
+    this.$modalBackdrop = $container.find('.interactive-map-modal__backdrop');
   };
 
   /** 2. Inicializa o mapa Leaflet com camada OSM */
@@ -83,18 +100,85 @@ H5P.InteractiveMap = (function ($) {
     return opts;
   };
 
+  MapManager.prototype.openMarkerContent = function (point) {
+    const interactiveContent = point && point.interactiveContent;
+
+    this.closeModal();
+    this.$modalContent.empty();
+    this.$modal.addClass('is-open').attr('aria-hidden', 'false');
+
+    if (!interactiveContent || !interactiveContent.library || !interactiveContent.params) {
+      this.$modalContent.append('<div class="interactive-map-modal__empty">Nenhum conteúdo interativo foi configurado para este ponto.</div>');
+      if (typeof this.trigger === 'function') {
+        this.trigger('resize');
+      }
+      return;
+    }
+
+    this.currentRunnable = H5P.newRunnable(
+      interactiveContent,
+      this.contentId,
+      this.$modalContent,
+      true
+    );
+
+    if (this.currentRunnable && typeof this.currentRunnable.trigger === 'function') {
+      this.currentRunnable.trigger('resize');
+    }
+    else if (this.currentRunnable) {
+      H5P.trigger(this.currentRunnable, 'resize');
+    }
+
+    if (typeof this.trigger === 'function') {
+      this.trigger('resize');
+    }
+  };
+
+  MapManager.prototype.closeModal = function () {
+    if (this.currentRunnable && typeof this.currentRunnable.pause === 'function') {
+      this.currentRunnable.pause();
+    }
+
+    this.currentRunnable = null;
+
+    if (this.$modalContent) {
+      this.$modalContent.empty();
+    }
+
+    if (this.$modal) {
+      this.$modal.removeClass('is-open').attr('aria-hidden', 'true');
+    }
+
+    document.querySelectorAll('.polo-item.active').forEach(el => {
+      el.classList.remove('active');
+    });
+
+    if (typeof this.trigger === 'function') {
+      this.trigger('resize');
+    }
+  };
+
   /** 4. Adiciona marcadores no mapa e armazena referências */
   MapManager.prototype.addMarkers = function () {
+    const self = this;
     const options = this.getMarkerOptions();
     const group = L.featureGroup();
 
     (this.params.mapPoints || []).forEach(point => {
-      const { title, description, location } = point;
+      const { location } = point;
       const lat = location ? location.latitude : null;
       const lng = location ? location.longitude : null;
       if (lat !== null && lat !== undefined && lng !== null && lng !== undefined) {
-        const m = L.marker([lat, lng], options)
-                   .bindPopup(`<b>${title}</b><br>${description}`);
+        const m = L.marker([lat, lng], options);
+        m.on('click', function () {
+          // 1. Abre a modal (isso vai chamar o closeModal interno e limpar as classes ativas antigas)
+          self.openMarkerContent(point);
+          
+          // 2. Agora sim, aplica a classe ativa no item atual
+          if (m._linkedListItem) {
+            m._linkedListItem.classList.add('active');
+          }
+        });
         group.addLayer(m);
         this.markers.push({ marker: m, point });
       }
@@ -125,35 +209,33 @@ H5P.InteractiveMap = (function ($) {
 
       // Evento de clique no item da lista
       item.addEventListener('click', () => {
-        this.sidebarItems.forEach(el => el.classList.remove('active'));
-        item.classList.add('active');
-
         // SE FOR MOBILE, recolhe a sidebar
         if (window.innerWidth <= 768) {
-          const sidebar = document.querySelector('.polos-sidebar');
-          const toggleBtn = document.getElementById('toggle-sidebar');
+          const sidebar = this.container.querySelector('.polos-sidebar');
+          const toggleBtn = this.container.querySelector('#toggle-sidebar');
           if (sidebar && toggleBtn && !sidebar.classList.contains('collapsed')) {
             sidebar.classList.add('collapsed');
             toggleBtn.textContent = '»';
           }
         }
 
-        // Verifica se a localização existe antes de tentar acessar, evitando erros
+        // Animação do mapa
         if (point.location) {
           this.map.flyTo([point.location.latitude, point.location.longitude], zoomOnClick, {
             animate: true, 
             duration: 1.2
           });
         }
-        marker.openPopup();
+        
+        // 1. Abre o conteúdo (limpa o estado anterior)
+        this.openMarkerContent(point);
+        
+        // 2. Aplica a classe ativa por último, garantindo que ela fique na tela
+        item.classList.add('active');
       });
 
       // Guardar referência cruzada
       marker._linkedListItem = item;
-
-      marker.on('popupclose', () => {
-        item.classList.remove('active');
-      });
 
       this.sidebarItems.push(item); // <- guardar para manipulação
       this.$list.appendChild(item);
@@ -167,8 +249,8 @@ H5P.InteractiveMap = (function ($) {
     this.$list.parentNode.appendChild(noResults);
     this.noResults = noResults; // salvar referência
 
-    const searchInput = document.getElementById('search-input');
-    const clearButton = document.getElementById('clear-search');
+    const searchInput = this.container.querySelector('#search-input');
+    const clearButton = this.container.querySelector('#clear-search');
 
     searchInput.addEventListener('input', () => {
       const searchTerm = searchInput.value.toLowerCase();
@@ -192,7 +274,7 @@ H5P.InteractiveMap = (function ($) {
     });
 
     // Retornar ao zoom padrão
-    const resetButton = document.getElementById('reset-view');
+    const resetButton = this.container.querySelector('#reset-view');
     resetButton.addEventListener('click', () => {
       if (this.mapBounds) {
         this.map.flyToBounds(this.mapBounds, {
@@ -208,13 +290,21 @@ H5P.InteractiveMap = (function ($) {
       });
     });
 
-    const toggleSidebar = document.getElementById('toggle-sidebar');
+    const toggleSidebar = this.container.querySelector('#toggle-sidebar');
     toggleSidebar.addEventListener('click', () => {
-      const sidebar = document.querySelector('.polos-sidebar');
+      const sidebar = this.container.querySelector('.polos-sidebar');
       sidebar.classList.toggle('collapsed');
     
-      const toggleBtn = document.getElementById('toggle-sidebar');
+      const toggleBtn = this.container.querySelector('#toggle-sidebar');
       toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '»' : '«';
+    });
+
+    this.$modalClose.on('click', () => {
+      this.closeModal();
+    });
+
+    this.$modalBackdrop.on('click', () => {
+      this.closeModal();
     });
 
   };

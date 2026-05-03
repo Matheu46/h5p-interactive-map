@@ -24,6 +24,31 @@
         "machineName": "H5PEditor.MapPointSelector",
         "majorVersion": 1,
         "minorVersion": 0
+      },
+      {
+        "machineName": "H5P.AdvancedText",
+        "majorVersion": 1,
+        "minorVersion": 1
+      },
+      {
+        "machineName": "H5P.Image",
+        "majorVersion": 1,
+        "minorVersion": 1
+      },
+      {
+        "machineName": "H5P.Video",
+        "majorVersion": 1,
+        "minorVersion": 6
+      },
+      {
+        "machineName": "H5P.MultiChoice",
+        "majorVersion": 1,
+        "minorVersion": 16
+      },
+      {
+        "machineName": "H5P.TrueFalse",
+        "majorVersion": 1,
+        "minorVersion": 8
       }
     ],
     "preloadedJs": [

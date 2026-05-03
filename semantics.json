@@ -98,28 +98,19 @@
           ]
         },
         {
-          "name": "description",
-          "type": "text",
-          "label": "Descrição",
-          "description": "Texto que aparecerá ao clicar no ponto",
-          "widget": "html",
-          "tags": [
-            "strong",
-            "em",
-            "sub",
-            "sup",
-            "u",
-            "ul",
-            "ol",
-            "li",
-            "a"
+          "name": "interactiveContent",
+          "type": "library",
+          "label": "Conteúdo interativo",
+          "description": "Biblioteca H5P exibida na modal ao clicar no ponto",
+          "optional": true,
+          "options": [
+            "H5P.AdvancedText 1.1",
+            "H5P.Image 1.1",
+            "H5P.Video 1.6",
+            "H5P.MultiChoice 1.16",
+            "H5P.TrueFalse 1.8"
           ],
-          "font": {
-            "size": true,
-            "family": true,
-            "color": true,
-            "background": true
-          }
+          "importance": "high"
         }
       ]      
     }

@@ -1,7 +1,12 @@
+/* Container raiz da atividade */
+.h5p-interactive-map {
+  position: relative;
+}
+
 /* Container do mapa */
 .h5p-interactive-map .h5p-map-container  {
   flex: 1;
-  height: 500px;
+  height: 700px;
   min-height: 300px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -15,7 +20,7 @@
   left: 0;
   width: 260px;
   height: 100%;
-  background: white;
+  background: rgba(255,255, 255, 0.4);
   padding: 1em;
   overflow-y: auto;
   z-index: 1000;
@@ -60,6 +65,7 @@
 .polo-item {
   padding: 0.5em;
   background: #f2f2f2;
+  border: 1px solid #666;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s;
@@ -130,9 +136,87 @@ body, html {
   width: 0;
   padding: 0;
   overflow: hidden;
+  #polos-list-items {
+    display: none;
+  }
 }
 
 /* Reposiciona o botão quando a sidebar está encolhida */
 .polos-sidebar.collapsed + .toggle-sidebar-button {
   left: 10px;
+}
+
+/* Modal do conteúdo H5P */
+.interactive-map-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.interactive-map-modal.is-open {
+  display: flex;
+}
+
+.interactive-map-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.interactive-map-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(900px, 100%);
+  max-height: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+  padding: 16px;
+  max-height: calc(100% - 48px);
+  display: flex;
+  flex-direction: column;
+}
+
+.interactive-map-modal__content {
+  overflow-y: auto;
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+}
+
+.interactive-map-modal__close {
+  position: absolute;
+  height: 32px;
+  width: 32px;
+  top: -16px;
+  right: -16px;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  padding: 0;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  border: 8px solid #fff;
+  background-color: #ebebeb;
+  border-radius: 50%;
+  transition: background 0.5s linear;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.interactive-map-modal__close:hover {
+  background: #d6d6d6;
+}
+
+.interactive-map-modal__empty {
+  padding: 24px 0;
+  color: #666;
+  text-align: center;
 }
