@@ -5,7 +5,7 @@ H5P.InteractiveMap = (function ($) {
     this.contentId = contentId;
     this.markers = [];
     this.map = null;
-    this.zoomLevel = params.defaultZoom;
+    this.mapBounds = null;
   }
 
   /** Utilitário para converter "num1,num2" em [num1, num2] */
@@ -48,11 +48,9 @@ H5P.InteractiveMap = (function ($) {
 
   /** 2. Inicializa o mapa Leaflet com camada OSM */
   MapManager.prototype.initMap = function () {
-    const { defaultLatitude: lat, defaultLongitude: lng } = this.params;
-
     this.map = L.map(this.mapId, {
       zoomControl: false
-    }).setView([lat, lng], this.zoomLevel);
+    }).setView([0, 0], 2);
 
     L.control.zoom({
       position: 'bottomright'
@@ -88,20 +86,36 @@ H5P.InteractiveMap = (function ($) {
   /** 4. Adiciona marcadores no mapa e armazena referências */
   MapManager.prototype.addMarkers = function () {
     const options = this.getMarkerOptions();
+    const group = L.featureGroup();
+
     (this.params.mapPoints || []).forEach(point => {
-      const { latitude: lat, longitude: lng, title, description } = point;
-      if (lat && lng) {
-        const m = L.marker([lat, lng], options).addTo(this.map)
+      const { title, description, location } = point;
+      const lat = location ? location.latitude : null;
+      const lng = location ? location.longitude : null;
+      if (lat !== null && lat !== undefined && lng !== null && lng !== undefined) {
+        const m = L.marker([lat, lng], options)
                    .bindPopup(`<b>${title}</b><br>${description}`);
+        group.addLayer(m);
         this.markers.push({ marker: m, point });
       }
     });
+
+    if (group.getLayers().length > 0) {
+      group.addTo(this.map);
+      this.mapBounds = group.getBounds();
+
+      const fitBoundsOptions = {
+        padding: [30, 30]
+      };
+
+      this.map.fitBounds(this.mapBounds, fitBoundsOptions);
+    }
   };
 
 
   /** 5. Preenche a lista lateral e conecta eventos */
   MapManager.prototype.buildSidebar = function () {
-    const zoomOnClick = this.params.clickZoomLevel || 14;
+    const zoomOnClick = 14;
     this.sidebarItems = [];
 
     this.markers.forEach(({ marker, point }) => {
@@ -124,10 +138,13 @@ H5P.InteractiveMap = (function ($) {
           }
         }
 
-        this.map.flyTo([point.latitude, point.longitude], zoomOnClick, {
-          animate: true, 
-          duration: 1.2
-        });
+        // Verifica se a localização existe antes de tentar acessar, evitando erros
+        if (point.location) {
+          this.map.flyTo([point.location.latitude, point.location.longitude], zoomOnClick, {
+            animate: true, 
+            duration: 1.2
+          });
+        }
         marker.openPopup();
       });
 
@@ -177,11 +194,18 @@ H5P.InteractiveMap = (function ($) {
     // Retornar ao zoom padrão
     const resetButton = document.getElementById('reset-view');
     resetButton.addEventListener('click', () => {
-      this.map.flyTo(
-        [this.params.defaultLatitude, this.params.defaultLongitude],
-        this.params.defaultZoom,
-        { animate: true, duration: 1.2 }
-      );
+      if (this.mapBounds) {
+        this.map.flyToBounds(this.mapBounds, {
+          duration: 1.2,
+          padding: [30, 30]
+        });
+        return;
+      }
+
+      this.map.flyTo([0, 0], 2, {
+        animate: true,
+        duration: 1.2
+      });
     });
 
     const toggleSidebar = document.getElementById('toggle-sidebar');

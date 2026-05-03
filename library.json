@@ -19,6 +19,13 @@
         "minorVersion": 5
       }
     ],
+    "editorDependencies": [
+      {
+        "machineName": "H5PEditor.MapPointSelector",
+        "majorVersion": 1,
+        "minorVersion": 0
+      }
+    ],
     "preloadedJs": [
       {
         "path": "leaflet/leaflet.js"

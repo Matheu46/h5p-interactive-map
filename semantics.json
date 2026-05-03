@@ -1,23 +1,5 @@
 [
   {
-    "name": "defaultLatitude",
-    "type": "text",
-    "label": "Latitude inicial",
-    "description": "Coordenada Y"
-  },
-  {
-    "name": "defaultLongitude",
-    "type": "text",
-    "label": "Longitude inicial",
-    "description": "Coordenada X"
-  },
-  {
-    "name": "defaultZoom",
-    "type": "number",
-    "label": "Zoom inicial",
-    "description": "Nível de zoom do mapa"
-  },
-  {
     "name": "iconSettings",
     "type": "group",
     "label": "Configurações do Ícone Personalizado",
@@ -96,16 +78,24 @@
           "description": "Nome do local"
         },
         {
-          "name": "latitude",
-          "type": "text",
-          "label": "Latitude",
-          "description": "Coordenada Y"
-        },
-        {
-          "name": "longitude",
-          "type": "text",
-          "label": "Longitude",
-          "description": "Coordenada X"
+          "name": "location",
+          "type": "group",
+          "label": "Coordenadas do Ponto",
+          "widget": "mapPointSelector",
+          "fields": [
+            {
+              "name": "latitude",
+              "type": "number",
+              "label": "Latitude",
+              "decimals": 6
+            },
+            {
+              "name": "longitude",
+              "type": "number",
+              "label": "Longitude",
+              "decimals": 6
+            }
+          ]
         },
         {
           "name": "description",
