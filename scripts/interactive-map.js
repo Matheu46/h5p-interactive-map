@@ -171,13 +171,20 @@ H5P.InteractiveMap = (function ($) {
       if (lat !== null && lat !== undefined && lng !== null && lng !== undefined) {
         const m = L.marker([lat, lng], options);
         m.on('click', function () {
-          // 1. Abre a modal (isso vai chamar o closeModal interno e limpar as classes ativas antigas)
-          self.openMarkerContent(point);
-          
-          // 2. Agora sim, aplica a classe ativa no item atual
-          if (m._linkedListItem) {
-            m._linkedListItem.classList.add('active');
-          }
+          // Center the map on the marker before opening the modal content.
+          self.map.flyTo([lat, lng], 14, {
+            animate: true,
+            duration: 1.2
+          });
+
+          // Delay modal opening so the fly animation remains visible.
+          window.setTimeout(function () {
+            if (m._linkedListItem) {
+              self.sidebarItems.forEach(el => el.classList.remove('active'));
+              m._linkedListItem.classList.add('active');
+            }
+            self.openMarkerContent(point);
+          }, 1000);
         });
         group.addLayer(m);
         this.markers.push({ marker: m, point });
@@ -219,19 +226,24 @@ H5P.InteractiveMap = (function ($) {
           }
         }
 
-        // Animação do mapa
+        // Delay modal opening so the fly animation remains visible.
         if (point.location) {
           this.map.flyTo([point.location.latitude, point.location.longitude], zoomOnClick, {
-            animate: true, 
+            animate: true,
             duration: 1.2
           });
+
+          window.setTimeout(() => {
+            this.sidebarItems.forEach(el => el.classList.remove('active'));
+            this.openMarkerContent(point);
+            item.classList.add('active');
+          }, 1000);
         }
-        
-        // 1. Abre o conteúdo (limpa o estado anterior)
-        this.openMarkerContent(point);
-        
-        // 2. Aplica a classe ativa por último, garantindo que ela fique na tela
-        item.classList.add('active');
+        else {
+          this.sidebarItems.forEach(el => el.classList.remove('active'));
+          item.classList.add('active');
+          this.openMarkerContent(point);
+        }
       });
 
       // Guardar referência cruzada
