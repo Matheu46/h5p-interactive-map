@@ -170,6 +170,15 @@ H5P.InteractiveMap = (function ($) {
       const lng = location ? location.longitude : null;
       if (lat !== null && lat !== undefined && lng !== null && lng !== undefined) {
         const m = L.marker([lat, lng], options);
+
+        // Show the point title on hover to improve map discoverability.
+        if (point.title) {
+          m.bindTooltip(point.title, {
+            direction: 'top',
+            offset: [-14, -15]
+          });
+        }
+
         m.on('click', function () {
           // Center the map on the marker before opening the modal content.
           self.map.flyTo([lat, lng], 14, {
