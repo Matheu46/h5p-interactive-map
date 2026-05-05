@@ -65,16 +65,35 @@ H5P.InteractiveMap = (function ($) {
 
   /** 2. Inicializa o mapa Leaflet com camada OSM */
   MapManager.prototype.initMap = function () {
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    });
+
+    const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri'
+    });
+
+    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
+    });
+
     this.map = L.map(this.mapId, {
-      zoomControl: false
+      zoomControl: false,
+      layers: [osm]
     }).setView([0, 0], 2);
 
     L.control.zoom({
       position: 'bottomright'
     }).addTo(this.map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+    const baseMaps = {
+      'Map (Default)': osm,
+      'Satellite': satellite,
+      'Topographic': topo
+    };
+
+    L.control.layers(baseMaps, null, {
+      position: 'bottomright'
     }).addTo(this.map);
   };
 
