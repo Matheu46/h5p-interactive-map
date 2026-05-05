@@ -177,7 +177,7 @@ H5P.InteractiveMap = (function ($) {
     }
   };
 
-  /** 4. Adiciona marcadores no mapa e armazena referências */
+  /** 4. Add markers to the map and store references */
   MapManager.prototype.addMarkers = function () {
     const self = this;
     const options = this.getMarkerOptions();
@@ -228,6 +228,13 @@ H5P.InteractiveMap = (function ($) {
       };
 
       this.map.fitBounds(this.mapBounds, fitBoundsOptions);
+
+      if (this.params.restrictNavigation) {
+        const restrictedBounds = this.mapBounds.pad(0.2);
+
+        this.map.setMaxBounds(restrictedBounds);
+        this.map.setMinZoom(this.map.getZoom());
+      }
     }
   };
 

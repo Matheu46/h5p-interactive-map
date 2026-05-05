@@ -62,6 +62,13 @@
     ]
   },
   {
+    "name": "restrictNavigation",
+    "type": "boolean",
+    "label": "Restrict map navigation",
+    "description": "Lock the map view so the user cannot pan away from the area containing the markers.",
+    "default": false
+  },
+  {
     "name": "mapPoints",
     "type": "list",
     "label": "Pontos no mapa",
