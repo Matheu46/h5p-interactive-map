@@ -17,6 +17,11 @@
         "machineName": "FontAwesome",
         "majorVersion": 4,
         "minorVersion": 5
+      },
+      {
+        "machineName": "H5P.Leaflet",
+        "majorVersion": 1,
+        "minorVersion": 9
       }
     ],
     "editorDependencies": [
@@ -53,16 +58,10 @@
     ],
     "preloadedJs": [
       {
-        "path": "leaflet/leaflet.js"
-      },
-      {
         "path": "scripts/interactive-map.js"
       }
     ],
     "preloadedCss": [
-      {
-        "path": "leaflet/leaflet.css"
-      },
       {
         "path": "styles/interactive-map.css"
       }
