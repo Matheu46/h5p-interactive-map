@@ -1,0 +1,110 @@
+{
+  "semantics": [
+    {
+      "label": "Custom Icon Settings",
+      "description": "Custom Icon Settings",
+      "fields": [
+        {
+          "label": "Icon name"
+        },
+        {
+          "label": "Point icon",
+          "description": "Upload a custom icon for the map points"
+        },
+        {
+          "label": "Icon size",
+          "description": "Define the icon size in format: width,height (e.g., 25,41)"
+        },
+        {
+          "label": "Icon anchor point",
+          "description": "Define the icon anchor point (x,y) (e.g., 12,41)"
+        },
+        {
+          "label": "Popup anchor point",
+          "description": "Define the popup anchor point (x,y) (e.g., 1,-34)"
+        },
+        {
+          "label": "Shadow icon",
+          "description": "Upload an icon for the marker shadow"
+        },
+        {
+          "label": "Shadow size",
+          "description": "Define the shadow size in format: width,height (e.g., 41,41)"
+        }
+      ]
+    },
+    {
+      "label": "Restrict map navigation",
+      "description": "Lock the map view so the user cannot pan away from the area containing the markers."
+    },
+    {
+      "label": "Map points",
+      "entity": "Location",
+      "field": {
+        "label": "Map Point",
+        "fields": [
+          {
+            "label": "Point Title",
+            "description": "Location name"
+          },
+          {
+            "label": "Point Coordinates",
+            "fields": [
+              {
+                "label": "Latitude"
+              },
+              {
+                "label": "Longitude"
+              }
+            ]
+          },
+          {
+            "label": "Interactive content",
+            "description": "H5P library displayed in the modal when clicking the point"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Translate user interface",
+      "fields": [
+        {
+          "label": "Search placeholder",
+          "default": "Type the location name"
+        },
+        {
+          "label": "Reset view button",
+          "default": "View all locations"
+        },
+        {
+          "label": "Modal aria label",
+          "default": "Interactive map content"
+        },
+        {
+          "label": "Close button aria label",
+          "default": "Close"
+        },
+        {
+          "label": "No interactive content message",
+          "default": "No interactive content has been configured for this point."
+        },
+        {
+          "label": "No results message",
+          "default": "No locations found."
+        },
+        {
+          "label": "Default Map Layer Name",
+          "default": "Map (Default)"
+        },
+        {
+          "label": "Satellite Layer Name",
+          "default": "Satellite"
+        },
+        {
+          "label": "Topographic Layer Name",
+          "default": "Topographic"
+        }
+      ]
+    }
+  ]
+}

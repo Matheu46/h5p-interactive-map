@@ -2,22 +2,22 @@
   {
     "name": "iconSettings",
     "type": "group",
-    "label": "Configurações do Ícone Personalizado",
-    "description": "Configurações do Ícone Personalizado",
+    "label": "Custom Icon Settings",
+    "description": "Custom Icon Settings",
     "optional": true,
     "fields": [
       {
         "name": "dummySummary",
         "type": "text",
-        "label": "Nome do ícone",
+        "label": "Icon name",
         "default": "",
         "optional": true
       },
       {
         "name": "icon",
         "type": "file",
-        "label": "Ícone do ponto",
-        "description": "Envie um ícone personalizado para os pontos do mapa",
+        "label": "Point icon",
+        "description": "Upload a custom icon for the map points",
         "optional": true,
         "mimetypes": ["image/png", "image/jpeg", "image/svg+xml"],
         "maxSize": 512000
@@ -25,29 +25,29 @@
       {
         "name": "iconSize",
         "type": "text",
-        "label": "Tamanho do ícone",
-        "description": "Defina o tamanho do ícone no formato: largura,altura (ex: 25,41)",
+        "label": "Icon size",
+        "description": "Define the icon size in format: width,height (e.g., 25,41)",
         "default": "25,41"
       },
       {
         "name": "iconAnchor",
         "type": "text",
-        "label": "Ponto de ancoragem do ícone",
-        "description": "Defina o ponto de ancoragem do ícone (x,y) (ex: 12,41)",
+        "label": "Icon anchor point",
+        "description": "Define the icon anchor point (x,y) (e.g., 12,41)",
         "default": "12,41"
       },
       {
         "name": "popupAnchor",
         "type": "text",
-        "label": "Ponto de ancoragem do popup",
-        "description": "Defina o ponto de ancoragem do popup (x,y) (ex: 1,-34)",
+        "label": "Popup anchor point",
+        "description": "Define the popup anchor point (x,y) (e.g., 1,-34)",
         "default": "1,-34"
       },
       {
         "name": "shadowUrl",
         "type": "file",
-        "label": "Ícone da sombra",
-        "description": "Envie um ícone para a sombra do marcador",
+        "label": "Shadow icon",
+        "description": "Upload an icon for the marker shadow",
         "optional": true,
         "mimetypes": ["image/png", "image/jpeg", "image/svg+xml"],
         "maxSize": 512000
@@ -55,8 +55,8 @@
       {
         "name": "shadowSize",
         "type": "text",
-        "label": "Tamanho da sombra",
-        "description": "Defina o tamanho da sombra no formato: largura,altura (ex: 41,41)",
+        "label": "Shadow size",
+        "description": "Define the shadow size in format: width,height (e.g., 41,41)",
         "default": "41,41"
       }
     ]
@@ -71,23 +71,23 @@
   {
     "name": "mapPoints",
     "type": "list",
-    "label": "Pontos no mapa",
-    "entity": "Localização",
+    "label": "Map points",
+    "entity": "Location",
     "field": {
       "name": "point",
       "type": "group",
-      "label": "Ponto no Mapa",
+      "label": "Map Point",
       "fields": [
         {
           "name": "title",
           "type": "text",
-          "label": "Título do Ponto",
-          "description": "Nome do local"
+          "label": "Point Title",
+          "description": "Location name"
         },
         {
           "name": "location",
           "type": "group",
-          "label": "Coordenadas do Ponto",
+          "label": "Point Coordinates",
           "widget": "mapPointSelector",
           "fields": [
             {
@@ -107,8 +107,8 @@
         {
           "name": "interactiveContent",
           "type": "library",
-          "label": "Conteúdo interativo",
-          "description": "Biblioteca H5P exibida na modal ao clicar no ponto",
+          "label": "Interactive content",
+          "description": "H5P library displayed in the modal when clicking the point",
           "optional": true,
           "options": [
             "H5P.AdvancedText 1.1",
@@ -121,5 +121,67 @@
         }
       ]      
     }
+  },
+  {
+    "name": "l10n",
+    "type": "group",
+    "common": true,
+    "label": "Translate user interface",
+    "fields": [
+      {
+        "name": "searchPlaceholder",
+        "type": "text",
+        "label": "Search placeholder",
+        "default": "Type the location name"
+      },
+      {
+        "name": "resetViewButton",
+        "type": "text",
+        "label": "Reset view button",
+        "default": "View all locations"
+      },
+      {
+        "name": "modalAriaLabel",
+        "type": "text",
+        "label": "Modal aria label",
+        "default": "Interactive map content"
+      },
+      {
+        "name": "closeButtonAriaLabel",
+        "type": "text",
+        "label": "Close button aria label",
+        "default": "Close"
+      },
+      {
+        "name": "noInteractiveContent",
+        "type": "text",
+        "label": "No interactive content message",
+        "default": "No interactive content has been configured for this point."
+      },
+      {
+        "name": "noResultsMessage",
+        "type": "text",
+        "label": "No results message",
+        "default": "No locations found."
+      },
+      {
+        "name": "layerMapDefault",
+        "type": "text",
+        "label": "Default Map Layer Name",
+        "default": "Map (Default)"
+      },
+      {
+        "name": "layerSatellite",
+        "type": "text",
+        "label": "Satellite Layer Name",
+        "default": "Satellite"
+      },
+      {
+        "name": "layerTopographic",
+        "type": "text",
+        "label": "Topographic Layer Name",
+        "default": "Topographic"
+      }
+    ]
   }
 ]

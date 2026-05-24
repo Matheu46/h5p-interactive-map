@@ -1,0 +1,110 @@
+{
+  "semantics": [
+    {
+      "label": "Configurações do Ícone Personalizado",
+      "description": "Configurações do Ícone Personalizado",
+      "fields": [
+        {
+          "label": "Nome do ícone"
+        },
+        {
+          "label": "Ícone do ponto",
+          "description": "Envie um ícone personalizado para os pontos do mapa"
+        },
+        {
+          "label": "Tamanho do ícone",
+          "description": "Defina o tamanho do ícone no formato: largura,altura (ex: 25,41)"
+        },
+        {
+          "label": "Ponto de ancoragem do ícone",
+          "description": "Defina o ponto de ancoragem do ícone (x,y) (ex: 12,41)"
+        },
+        {
+          "label": "Ponto de ancoragem do popup",
+          "description": "Defina o ponto de ancoragem do popup (x,y) (ex: 1,-34)"
+        },
+        {
+          "label": "Ícone da sombra",
+          "description": "Envie um ícone para a sombra do marcador"
+        },
+        {
+          "label": "Tamanho da sombra",
+          "description": "Defina o tamanho da sombra no formato: largura,altura (ex: 41,41)"
+        }
+      ]
+    },
+    {
+      "label": "Restringir navegação no mapa",
+      "description": "Travar a visualização do mapa para que o usuário não consiga navegar para longe da área contendo os marcadores."
+    },
+    {
+      "label": "Pontos no mapa",
+      "entity": "Localização",
+      "field": {
+        "label": "Ponto no Mapa",
+        "fields": [
+          {
+            "label": "Título do Ponto",
+            "description": "Nome do local"
+          },
+          {
+            "label": "Coordenadas do Ponto",
+            "fields": [
+              {
+                "label": "Latitude"
+              },
+              {
+                "label": "Longitude"
+              }
+            ]
+          },
+          {
+            "label": "Conteúdo interativo",
+            "description": "Biblioteca H5P exibida na modal ao clicar no ponto"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Traduzir interface do usuário",
+      "fields": [
+        {
+          "label": "Texto do placeholder de busca",
+          "default": "Digite o nome do polo"
+        },
+        {
+          "label": "Texto do botão resetar zoom",
+          "default": "Ver todos os campi"
+        },
+        {
+          "label": "Aria-label da modal",
+          "default": "Conteúdo interativo do mapa"
+        },
+        {
+          "label": "Aria-label do botão de fechar",
+          "default": "Fechar"
+        },
+        {
+          "label": "Mensagem para conteúdo interativo vazio",
+          "default": "Nenhum conteúdo interativo foi configurado para este ponto."
+        },
+        {
+          "label": "Mensagem para busca sem resultados",
+          "default": "Nenhum polo encontrado."
+        },
+        {
+          "label": "Nome da camada padrão",
+          "default": "Map (Default)"
+        },
+        {
+          "label": "Nome da camada de satélite",
+          "default": "Satellite"
+        },
+        {
+          "label": "Nome da camada topográfica",
+          "default": "Topographic"
+        }
+      ]
+    }
+  ]
+}

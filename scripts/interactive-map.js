@@ -2,6 +2,20 @@ H5P.InteractiveMap = (function ($) {
 
   function MapManager(params, contentId) {
     this.params = params;
+
+    // Configuração dos textos traduzíveis (i18n) com valores padrão (inglês)
+    this.params.l10n = $.extend({
+      searchPlaceholder: 'Type the location name',
+      resetViewButton: 'View all locations',
+      modalAriaLabel: 'Interactive map content',
+      closeButtonAriaLabel: 'Close',
+      noInteractiveContent: 'No interactive content has been configured for this point.',
+      noResultsMessage: 'No locations found.',
+      layerMapDefault: 'Map (Default)',
+      layerSatellite: 'Satellite',
+      layerTopographic: 'Topographic'
+    }, this.params.l10n || {});
+
     this.contentId = contentId;
     this.markers = [];
     this.map = null;
@@ -35,21 +49,21 @@ H5P.InteractiveMap = (function ($) {
     const sidebar = `
       <aside class="polos-sidebar">
         <div id="search-container">
-          <input type="text" id="search-input" placeholder="Digite o nome do polo">
+          <input type="text" id="search-input" placeholder="${this.params.l10n.searchPlaceholder}">
           <button id="clear-search" style="display:none">&times;</button>
         </div>
         <div id="polos-list-items"></div>
       </aside>
       <button id="toggle-sidebar" class="toggle-sidebar-button">«</button>
-      <button id="reset-view" class="reset-view-button">Ver todos os campi</button>
+      <button id="reset-view" class="reset-view-button">${this.params.l10n.resetViewButton}</button>
     `;
     $container.append(sidebar);
 
     const modal = `
       <div class="interactive-map-modal" aria-hidden="true">
         <div class="interactive-map-modal__backdrop"></div>
-        <div class="interactive-map-modal__dialog" role="dialog" aria-modal="true" aria-label="Conteúdo interativo do mapa">
-          <button type="button" class="interactive-map-modal__close" aria-label="Fechar">×</button>
+        <div class="interactive-map-modal__dialog" role="dialog" aria-modal="true" aria-label="${this.params.l10n.modalAriaLabel}">
+          <button type="button" class="interactive-map-modal__close" aria-label="${this.params.l10n.closeButtonAriaLabel}">×</button>
           <div class="interactive-map-modal__content"></div>
         </div>
       </div>
@@ -86,11 +100,10 @@ H5P.InteractiveMap = (function ($) {
       position: 'bottomright'
     }).addTo(this.map);
 
-    const baseMaps = {
-      'Map (Default)': osm,
-      'Satellite': satellite,
-      'Topographic': topo
-    };
+    const baseMaps = {};
+    baseMaps[this.params.l10n.layerMapDefault] = osm;
+    baseMaps[this.params.l10n.layerSatellite] = satellite;
+    baseMaps[this.params.l10n.layerTopographic] = topo;
 
     L.control.layers(baseMaps, null, {
       position: 'bottomright'
@@ -104,15 +117,15 @@ H5P.InteractiveMap = (function ($) {
     if (cfg && cfg.icon) {
       const path = H5P.getPath;
       const base = cfg.icon.path;
-      const iconUrl   = path(base, this.contentId);
+      const iconUrl = path(base, this.contentId);
       const shadowUrl = cfg.shadowUrl ? path(cfg.shadowUrl.path, this.contentId) : null;
 
       opts.icon = L.icon({
         iconUrl,
         shadowUrl,
-        iconSize:   MapManager.parseCoordinate(cfg.iconSize,   [25, 41]),
+        iconSize: MapManager.parseCoordinate(cfg.iconSize, [25, 41]),
         iconAnchor: MapManager.parseCoordinate(cfg.iconAnchor, [12, 41]),
-        popupAnchor:MapManager.parseCoordinate(cfg.popupAnchor,[1, -34]),
+        popupAnchor: MapManager.parseCoordinate(cfg.popupAnchor, [1, -34]),
         shadowSize: MapManager.parseCoordinate(cfg.shadowSize, [41, 41])
       });
     }
@@ -127,7 +140,7 @@ H5P.InteractiveMap = (function ($) {
     this.$modal.addClass('is-open').attr('aria-hidden', 'false');
 
     if (!interactiveContent || !interactiveContent.library || !interactiveContent.params) {
-      this.$modalContent.append('<div class="interactive-map-modal__empty">Nenhum conteúdo interativo foi configurado para este ponto.</div>');
+      this.$modalContent.append('<div class="interactive-map-modal__empty">' + this.params.l10n.noInteractiveContent + '</div>');
       if (typeof this.trigger === 'function') {
         this.trigger('resize');
       }
@@ -284,17 +297,17 @@ H5P.InteractiveMap = (function ($) {
       // Guardar referência cruzada
       marker._linkedListItem = item;
 
-      this.sidebarItems.push(item); // <- guardar para manipulação
+      this.sidebarItems.push(item);
       this.$list.appendChild(item);
     });
 
     const noResults = document.createElement('div');
     noResults.className = 'no-results-message';
-    noResults.textContent = 'Nenhum polo encontrado.';
+    noResults.textContent = this.params.l10n.noResultsMessage;
     noResults.style.display = 'none';
 
     this.$list.parentNode.appendChild(noResults);
-    this.noResults = noResults; // salvar referência
+    this.noResults = noResults;
 
     const searchInput = this.container.querySelector('#search-input');
     const clearButton = this.container.querySelector('#clear-search');
@@ -302,13 +315,13 @@ H5P.InteractiveMap = (function ($) {
     searchInput.addEventListener('input', () => {
       const searchTerm = searchInput.value.toLowerCase();
       let visibleCount = 0;
-    
+
       this.sidebarItems.forEach(item => {
         const matches = item.textContent.toLowerCase().includes(searchTerm);
         item.style.display = matches ? 'block' : 'none';
         if (matches) visibleCount++;
       });
-    
+
       clearButton.style.display = searchTerm ? 'inline-block' : 'none';
       this.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     });
@@ -341,7 +354,7 @@ H5P.InteractiveMap = (function ($) {
     toggleSidebar.addEventListener('click', () => {
       const sidebar = this.container.querySelector('.polos-sidebar');
       sidebar.classList.toggle('collapsed');
-    
+
       const toggleBtn = this.container.querySelector('#toggle-sidebar');
       toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '»' : '«';
     });
