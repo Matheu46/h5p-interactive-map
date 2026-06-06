@@ -70,11 +70,11 @@
       "fields": [
         {
           "label": "Texto do placeholder de busca",
-          "default": "Digite o nome do polo"
+          "default": "Digite o nome da localidade"
         },
         {
           "label": "Texto do botão resetar zoom",
-          "default": "Ver todos os campi"
+          "default": "Ver todas as localidades"
         },
         {
           "label": "Aria-label da modal",
@@ -90,7 +90,7 @@
         },
         {
           "label": "Mensagem para busca sem resultados",
-          "default": "Nenhum polo encontrado."
+          "default": "Nenhuma localidade encontrada."
         },
         {
           "label": "Nome da camada padrão",

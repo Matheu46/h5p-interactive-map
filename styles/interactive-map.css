@@ -1,10 +1,12 @@
-/* Container raiz da atividade */
 .h5p-interactive-map {
   position: relative;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  align-items: stretch;
 }
 
-/* Container do mapa */
-.h5p-interactive-map .h5p-map-container  {
+.h5p-interactive-map .h5p-map-container {
   flex: 1;
   height: 700px;
   min-height: 300px;
@@ -14,21 +16,19 @@
   position: relative;
 }
 
-.polos-sidebar {
-  position: absolute;
-  top: 0;
-  left: 0;
+.locations-sidebar {
+  position: relative;
   width: 260px;
-  height: 100%;
-  background: rgba(255,255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.9);
   padding: 1em;
   overflow-y: auto;
   z-index: 1000;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
   transition: width 0.3s, padding 0.3s;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
-/* Container da busca */
 #search-container {
   position: relative;
   margin-bottom: 1em;
@@ -55,14 +55,13 @@
   color: #888;
 }
 
-/* Lista de polos */
-#polos-list-items {
+#locations-list-items {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
 }
 
-.polo-item {
+.location-item {
   padding: 0.5em;
   background: #f2f2f2;
   border: 1px solid #666;
@@ -71,16 +70,15 @@
   transition: background 0.3s;
 }
 
-.polo-item:hover {
+.location-item:hover {
   background: #e0e0e0;
 }
 
-.polo-item.active {
+.location-item.active {
   background: #0288d1;
   color: white;
 }
 
-/* Mensagem de nenhum resultado */
 .no-results-message {
   margin-top: 1em;
   color: #999;
@@ -88,12 +86,11 @@
   text-align: center;
 }
 
-/* Botão "Ver todos os campi" no topo direito */
 .reset-view-button {
   position: absolute;
   top: 15px;
   right: 15px;
-  z-index: 400;
+  z-index: 1000;
   background-color: #0288d1;
   color: white;
   border: none;
@@ -109,44 +106,55 @@
 }
 
 /* Ajustes gerais */
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: sans-serif;
 }
 
-/* Botão fixo à esquerda da sidebar */
 .toggle-sidebar-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 275px; /* ajusta conforme largura da sidebar */
+  left: 260px;
   z-index: 1000;
-  padding: 0.4rem 0.6rem;
+  padding: 1rem 0.5rem;
   background: #0277bd;
   border: 1px solid #ccc;
   color: #FFF;
   cursor: pointer;
   transition: left 0.3s;
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }
 
-/* Sidebar encolhida */
-.polos-sidebar.collapsed {
+.locations-sidebar.collapsed {
   width: 0;
   padding: 0;
   overflow: hidden;
-  #polos-list-items {
-    display: none;
+  border: none;
+}
+
+.locations-sidebar.collapsed #locations-list-items,
+.locations-sidebar.collapsed #search-container {
+  display: none;
+}
+
+.locations-sidebar.collapsed+.toggle-sidebar-button {
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .locations-sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
   }
 }
 
-/* Reposiciona o botão quando a sidebar está encolhida */
-.polos-sidebar.collapsed + .toggle-sidebar-button {
-  left: 10px;
-}
-
-/* Modal do conteúdo H5P */
 .interactive-map-modal {
   position: absolute;
   inset: 0;

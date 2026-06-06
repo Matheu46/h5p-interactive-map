@@ -41,23 +41,24 @@ H5P.InteractiveMap = (function ($) {
 
     $container.addClass('h5p-interactive-map');
 
-    // Mapa
-    this.mapId = 'h5p-map-' + this.contentId;
-    $container.append(`<div id="${this.mapId}" class="h5p-map-container"></div>`);
-
     // Sidebar
     const sidebar = `
-      <aside class="polos-sidebar">
+      <aside class="locations-sidebar">
         <div id="search-container">
           <input type="text" id="search-input" placeholder="${this.params.l10n.searchPlaceholder}">
           <button id="clear-search" style="display:none">&times;</button>
         </div>
-        <div id="polos-list-items"></div>
+        <div id="locations-list-items"></div>
       </aside>
       <button id="toggle-sidebar" class="toggle-sidebar-button">«</button>
       <button id="reset-view" class="reset-view-button">${this.params.l10n.resetViewButton}</button>
     `;
     $container.append(sidebar);
+
+    // Mapa
+    this.mapId = 'h5p-map-' + this.contentId;
+    $container.append(`<div id="${this.mapId}" class="h5p-map-container"></div>`);
+
 
     const modal = `
       <div class="interactive-map-modal" aria-hidden="true">
@@ -70,7 +71,7 @@ H5P.InteractiveMap = (function ($) {
     `;
     $container.append(modal);
 
-    this.$list = this.container.querySelector('#polos-list-items');
+    this.$list = this.container.querySelector('#locations-list-items');
     this.$modal = $container.find('.interactive-map-modal');
     this.$modalContent = $container.find('.interactive-map-modal__content');
     this.$modalClose = $container.find('.interactive-map-modal__close');
@@ -181,7 +182,7 @@ H5P.InteractiveMap = (function ($) {
       this.$modal.removeClass('is-open').attr('aria-hidden', 'true');
     }
 
-    document.querySelectorAll('.polo-item.active').forEach(el => {
+    document.querySelectorAll('.location-item.active').forEach(el => {
       el.classList.remove('active');
     });
 
@@ -259,14 +260,14 @@ H5P.InteractiveMap = (function ($) {
 
     this.markers.forEach(({ marker, point }) => {
       const item = document.createElement('div');
-      item.className = 'polo-item';
+      item.className = 'location-item';
       item.textContent = point.title;
 
       // Evento de clique no item da lista
       item.addEventListener('click', () => {
         // SE FOR MOBILE, recolhe a sidebar
         if (window.innerWidth <= 768) {
-          const sidebar = this.container.querySelector('.polos-sidebar');
+          const sidebar = this.container.querySelector('.locations-sidebar');
           const toggleBtn = this.container.querySelector('#toggle-sidebar');
           if (sidebar && toggleBtn && !sidebar.classList.contains('collapsed')) {
             sidebar.classList.add('collapsed');
@@ -352,11 +353,22 @@ H5P.InteractiveMap = (function ($) {
 
     const toggleSidebar = this.container.querySelector('#toggle-sidebar');
     toggleSidebar.addEventListener('click', () => {
-      const sidebar = this.container.querySelector('.polos-sidebar');
+      const sidebar = this.container.querySelector('.locations-sidebar');
       sidebar.classList.toggle('collapsed');
 
       const toggleBtn = this.container.querySelector('#toggle-sidebar');
       toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '»' : '«';
+
+      // Atualiza o tamanho do mapa para o Leaflet durante e após a animação
+      if (this.map) {
+        const interval = setInterval(() => {
+          this.map.invalidateSize();
+        }, 30);
+        setTimeout(() => {
+          clearInterval(interval);
+          this.map.invalidateSize();
+        }, 350); // um pouco mais que os 0.3s da transição CSS
+      }
     });
 
     this.$modalClose.on('click', () => {
