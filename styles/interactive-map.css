@@ -228,3 +228,43 @@ html {
   color: #666;
   text-align: center;
 }
+
+/* Fullscreen Styles */
+.h5p-interactive-map.is-fullscreen {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.h5p-interactive-map.is-fullscreen .h5p-map-container {
+  height: 100% !important;
+  min-height: 100% !important;
+  border-radius: 0;
+  border: none;
+}
+
+.toggle-fullscreen-button {
+  position: absolute;
+  top: 60px; /* Below reset-view-button */
+  right: 15px;
+  z-index: 1000;
+  width: 36px;
+  height: 36px;
+  background-color: #0288d1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>');
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-color 0.3s;
+}
+
+.toggle-fullscreen-button:hover {
+  background-color: #0277bd;
+}
+
+.toggle-fullscreen-button.is-active {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>');
+}

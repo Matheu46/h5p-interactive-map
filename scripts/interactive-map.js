@@ -1,7 +1,10 @@
 H5P.InteractiveMap = (function ($) {
 
-  function MapManager(params, contentId) {
+  function MapManager(params, contentId, extras) {
+    H5P.EventDispatcher.call(this);
+    
     this.params = params;
+    this.extras = extras || {};
 
     // Configuração dos textos traduzíveis (i18n) com valores padrão (inglês)
     this.params.l10n = $.extend({
@@ -13,7 +16,9 @@ H5P.InteractiveMap = (function ($) {
       noResultsMessage: 'No locations found.',
       layerMapDefault: 'Map (Default)',
       layerSatellite: 'Satellite',
-      layerTopographic: 'Topographic'
+      layerTopographic: 'Topographic',
+      enterFullscreen: 'Enter fullscreen mode',
+      exitFullscreen: 'Exit fullscreen mode'
     }, this.params.l10n || {});
 
     this.contentId = contentId;
@@ -21,7 +26,12 @@ H5P.InteractiveMap = (function ($) {
     this.map = null;
     this.mapBounds = null;
     this.currentRunnable = null;
+    
+    this.setupFullscreenHandlers();
   }
+
+  MapManager.prototype = Object.create(H5P.EventDispatcher.prototype);
+  MapManager.prototype.constructor = MapManager;
 
   /** Utilitário para converter "num1,num2" em [num1, num2] */
   MapManager.parseCoordinate = function (value, defaultValue) {
@@ -52,6 +62,7 @@ H5P.InteractiveMap = (function ($) {
       </aside>
       <button id="toggle-sidebar" class="toggle-sidebar-button">«</button>
       <button id="reset-view" class="reset-view-button">${this.params.l10n.resetViewButton}</button>
+      <button id="toggle-fullscreen" class="toggle-fullscreen-button" aria-label="${this.params.l10n.enterFullscreen}" title="${this.params.l10n.enterFullscreen}"></button>
     `;
     $container.append(sidebar);
 
@@ -76,6 +87,60 @@ H5P.InteractiveMap = (function ($) {
     this.$modalContent = $container.find('.interactive-map-modal__content');
     this.$modalClose = $container.find('.interactive-map-modal__close');
     this.$modalBackdrop = $container.find('.interactive-map-modal__backdrop');
+    this.fullscreenBtn = this.container.querySelector('#toggle-fullscreen');
+    
+    if (!H5P.fullscreenSupported) {
+      this.fullscreenBtn.style.display = 'none';
+    }
+  };
+
+  /** 1.5 Fullscreen Logic */
+  MapManager.prototype.setupFullscreenHandlers = function () {
+    this.on('enterFullScreen', () => {
+      this.$container.addClass('is-fullscreen');
+      this.updateFullscreenButton(true);
+      setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 350);
+    });
+
+    this.on('exitFullScreen', () => {
+      this.$container.removeClass('is-fullscreen');
+      this.updateFullscreenButton(false);
+      setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 350);
+    });
+
+    const recomputeDimensions = () => {
+      if (H5P.isFullscreen) {
+        setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 350);
+      }
+    };
+
+    if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
+      window.screen.orientation.addEventListener('change', recomputeDimensions);
+    } else {
+      window.addEventListener('orientationchange', recomputeDimensions, false);
+    }
+  };
+
+  MapManager.prototype.toggleFullScreen = function () {
+    if (H5P.isFullscreen) {
+      H5P.exitFullScreen();
+    } else {
+      H5P.fullScreen(this.$container, this);
+    }
+  };
+
+  MapManager.prototype.updateFullscreenButton = function (isFullScreen) {
+    if (!this.fullscreenBtn) return;
+    
+    if (isFullScreen) {
+      this.fullscreenBtn.classList.add('is-active');
+      this.fullscreenBtn.setAttribute('aria-label', this.params.l10n.exitFullscreen);
+      this.fullscreenBtn.setAttribute('title', this.params.l10n.exitFullscreen);
+    } else {
+      this.fullscreenBtn.classList.remove('is-active');
+      this.fullscreenBtn.setAttribute('aria-label', this.params.l10n.enterFullscreen);
+      this.fullscreenBtn.setAttribute('title', this.params.l10n.enterFullscreen);
+    }
   };
 
   /** 2. Inicializa o mapa Leaflet com camada OSM */
@@ -370,6 +435,12 @@ H5P.InteractiveMap = (function ($) {
         }, 350); // um pouco mais que os 0.3s da transição CSS
       }
     });
+
+    if (this.fullscreenBtn) {
+      this.fullscreenBtn.addEventListener('click', () => {
+        this.toggleFullScreen();
+      });
+    }
 
     this.$modalClose.on('click', () => {
       this.closeModal();
