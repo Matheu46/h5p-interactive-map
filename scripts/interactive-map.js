@@ -26,6 +26,11 @@ H5P.InteractiveMap = (function ($) {
     this.map = null;
     this.mapBounds = null;
     this.currentRunnable = null;
+
+    // xAPI tracking
+    this.visitedPoints = new Set();
+    this.totalPoints = (this.params.mapPoints || []).length;
+    this.isCompleted = false;
     
     this.setupFullscreenHandlers();
   }
@@ -42,6 +47,15 @@ H5P.InteractiveMap = (function ($) {
       }
     }
     return defaultValue;
+  };
+
+  /** xAPI Support */
+  MapManager.prototype.getScore = function () {
+    return this.isCompleted ? 1 : 0;
+  };
+
+  MapManager.prototype.getMaxScore = function () {
+    return 1;
   };
 
   /** 1. Prepara o container do mapa e da sidebar */
@@ -229,6 +243,18 @@ H5P.InteractiveMap = (function ($) {
 
     if (typeof this.trigger === 'function') {
       this.trigger('resize');
+    }
+
+    // xAPI progress tracking
+    if (point && !this.visitedPoints.has(point)) {
+      this.visitedPoints.add(point);
+      
+      this.triggerXAPI('interacted');
+
+      if (this.visitedPoints.size >= this.totalPoints && !this.isCompleted && this.totalPoints > 0) {
+        this.isCompleted = true;
+        this.triggerXAPI('completed');
+      }
     }
   };
 
